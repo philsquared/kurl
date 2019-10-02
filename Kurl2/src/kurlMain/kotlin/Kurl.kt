@@ -25,10 +25,17 @@ fun main()
         nmemb : size_t,
         userp : COpaquePointer? ->
 
-        val actualSize = size * nmemb
-        val str = contents?.toKString(actualSize.toInt())
+        if( contents == null )
+        {
+          0u
+        }
+        else
+        {
+          val actualSize = size * nmemb
+          val str = contents.toKString(actualSize.toInt())
 
-        actualSize
+          actualSize
+        }
       } )
 
 //  curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
