@@ -1,6 +1,26 @@
 import interop.*
 import kotlinx.cinterop.*
 import kotlin.system.exitProcess
+import platform.posix.size_t
+
+fun CPointer<ByteVar>.toKString(length: Int): String {
+    val bytes = this.readBytes(length)
+    return bytes.decodeToString()
+}
+
+fun WriteMemoryCallback(
+  contents : CPointer<ByteVar>?,
+  size : size_t,
+  nmemb : size_t,
+  userp : COpaquePointer?) : size_t
+{
+    val actualSize = size * nmemb
+
+    val str = contents?.toKString(actualSize.toInt())
+
+
+  return actualSize
+}
 
 fun main()
 {
@@ -13,7 +33,7 @@ fun main()
   curl_easy_setopt(curl, CURLOPT_URL, "https://curl.haxx.se/libcurl/c/getinmemory.html")
   curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L)
 
-//  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
+  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, staticCFunction( ::WriteMemoryCallback ) )
 //  curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
 
 
