@@ -8,20 +8,6 @@ fun CPointer<ByteVar>.toKString(length: Int): String {
     return bytes.decodeToString()
 }
 
-fun WriteMemoryCallback(
-  contents : CPointer<ByteVar>?,
-  size : size_t,
-  nmemb : size_t,
-  userp : COpaquePointer?) : size_t
-{
-    val actualSize = size * nmemb
-
-    val str = contents?.toKString(actualSize.toInt())
-
-
-  return actualSize
-}
-
 fun main()
 {
   val curl = curl_easy_init()
@@ -33,7 +19,18 @@ fun main()
   curl_easy_setopt(curl, CURLOPT_URL, "https://curl.haxx.se/libcurl/c/getinmemory.html")
   curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L)
 
-  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, staticCFunction( ::WriteMemoryCallback ) )
+  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, staticCFunction {
+        contents : CPointer<ByteVar>?,
+        size : size_t,
+        nmemb : size_t,
+        userp : COpaquePointer? ->
+
+        val actualSize = size * nmemb
+        val str = contents?.toKString(actualSize.toInt())
+
+        actualSize
+      } )
+
 //  curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
 
 
