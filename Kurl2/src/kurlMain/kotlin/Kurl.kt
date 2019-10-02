@@ -8,7 +8,9 @@ fun CPointer<ByteVar>.toKString(length: Int): String {
     return bytes.decodeToString()
 }
 
-class Buffer
+class Buffer {
+    var data = ""
+}
 
 fun main()
 {
@@ -42,6 +44,7 @@ fun main()
 
           if( userp != null ) {
             val localBuf = userp.asStableRef<Buffer>().get()
+            localBuf.data += str
           }
 
           actualSize
@@ -51,9 +54,15 @@ fun main()
 
   val res = curl_easy_perform(curl)
 
-  if(res != CURLE_OK)
+  if(res != CURLE_OK) {
       println("curl_easy_perform() failed: ${curl_easy_strerror(res)?.toKString()}")
+  }
+  else {
+      println( buffer.data )
+      println( "Received ${buffer.data.length} characters")
+  }
 
   curl_easy_cleanup(curl)
+  bufferRef.dispose()
 
 }
