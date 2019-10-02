@@ -8,16 +8,22 @@ fun CPointer<ByteVar>.toKString(length: Int): String {
     return bytes.decodeToString()
 }
 
+class Buffer
+
 fun main()
 {
   val curl = curl_easy_init()
   if(curl == null)
     exitProcess(-1)
 
+  val buffer = Buffer()
+  val bufferRef = StableRef.create(buffer)
 
   curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
   curl_easy_setopt(curl, CURLOPT_URL, "https://curl.haxx.se/libcurl/c/getinmemory.html")
   curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L)
+
+  curl_easy_setopt(curl, CURLOPT_WRITEDATA, bufferRef.asCPointer())
 
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, staticCFunction {
         contents : CPointer<ByteVar>?,
@@ -34,11 +40,13 @@ fun main()
           val actualSize = size * nmemb
           val str = contents.toKString(actualSize.toInt())
 
+          if( userp != null ) {
+            val localBuf = userp.asStableRef<Buffer>().get()
+          }
+
           actualSize
         }
       } )
-
-//  curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
 
 
   val res = curl_easy_perform(curl)
