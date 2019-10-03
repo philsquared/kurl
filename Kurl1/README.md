@@ -1,8 +1,7 @@
-# Hello World
+# Kurl1
 
-A basic "Hello, World" in Kotlin/Native and Gradle.
+A Kotlin/ Native sample
 
-Use the following Gradle commands
-* to build: `./gradlew assemble`
-* to test: `./gradlew check`
-* to run:  `./gradlew runHelloWorldAppReleaseExecutableHelloWorld`
+* interop with libCurl
+* direct translation of simple Curl C example
+* prints to console with no accessible buffer

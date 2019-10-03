@@ -1,8 +1,8 @@
-# Hello World
+# Kurl3
 
-A basic "Hello, World" in Kotlin/Native and Gradle.
+A Kotlin/ Native sample
 
-Use the following Gradle commands
-* to build: `./gradlew assemble`
-* to test: `./gradlew check`
-* to run:  `./gradlew runHelloWorldAppReleaseExecutableHelloWorld`
+* interop with libCurl
+* uses callback lambda
+* buffers downloaded text using a raw byte array
+* maintains capacity and "reallocs" as necessary 
